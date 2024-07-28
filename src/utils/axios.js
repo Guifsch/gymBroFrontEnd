@@ -8,21 +8,21 @@ const axiosConfig = () => {
   let history = useNavigate();
   const dispatch = useDispatch();
 
-  // const axiosClient = axios.create({
-  //   baseURL: "https://gym-bro-backend.vercel.app",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  // });
-
   const axiosClient = axios.create({
-    baseURL: import.meta.env.MODE === 'production'
-      ? import.meta.env.VITE_BASE_URL_PROD
-      : import.meta.env.VITE_BASE_URL_DEV,
+    baseURL: "https://gymbrobackend.onrender.com",
     headers: {
       "Content-Type": "application/json",
     },
   });
+
+  // const axiosClient = axios.create({
+  //   baseURL: import.meta.env.MODE === 'production'
+  //     ? import.meta.env.VITE_BASE_URL_PROD
+  //     : import.meta.env.VITE_BASE_URL_DEV,
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  // });
 
   // const axiosClient = axios.create({
   //   baseURL: "http://localhost:3000",
