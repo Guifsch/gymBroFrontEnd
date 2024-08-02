@@ -9,15 +9,9 @@ import WorkoutSet from "../components/WorkoutSet";
 import GenericImage from "../assets/generic-image.png";
 import ImageWithPlaceholder from "../utils/imagePlaceHolderUntilLoad";
 import ModalWorkoutCategory from "../components/ModalWorkoutCategory";
-import {
-  Tab,
-  Button,
-  Typography,
-  IconButton,
-  Box,
-  Container,
-} from "@mui/material";
+import { Tab, IconButton, Box, Container } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import CustomaizedButton from "../components/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import React, { useCallback, useState, useEffect } from "react";
@@ -60,6 +54,7 @@ export default function Workouts() {
   };
 
   const getWorkout = useCallback(async () => {
+    dispatch(loadingTrue());
     try {
       const response = await axiosInterceptor.get(`/api/workout/workouts`, {
         withCredentials: true,
@@ -67,6 +62,8 @@ export default function Workouts() {
       setWorkouts(response.data.workouts);
     } catch (e) {
       dispatch(snackBarMessageError(e.response.data.error));
+    } finally {
+      dispatch(loadingFalse());
     }
   }, []);
 
@@ -226,7 +223,7 @@ export default function Workouts() {
     },
     muiTablePaperProps: {
       sx: {
-        borderRadius: "2%",
+        borderRadius: "5px",
       },
     },
   });
@@ -333,53 +330,46 @@ export default function Workouts() {
             sx={{
               display: "flex",
               justifyContent: "center",
+              "@media (max-width:500px)": {
+                flexDirection: "column",
+              },
             }}
           >
-            <Button
-              variant="contained"
+            <Box
               sx={{
-                mt: 0,
-                mb: "25px",
-
-                mr: "20px",
+                display: "flex",
+                justifyContent: "center",
+                mr: 5,
+                "@media (max-width:500px)": {
+                  mb: 2,
+                  mr: 0,
+                },
               }}
-              onClick={handleOpenCategoryModal}
             >
-              <Typography
-                variant="h7"
-                textAlign="center"
-                sx={{
-                  "@media (max-width:600px)": {
-                    fontSize: "0.7rem",
-                  },
-                }}
-              >
-                Criar categorias
-              </Typography>
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                mt: 0,
-                mb: "25px",
-                ml: "20px",
-              }}
-              onClick={handleOpenWorkoutModal}
-            >
-              <Typography
-                variant="h7"
-                textAlign="center"
-                sx={{
-                  "@media (max-width:600px)": {
-                    fontSize: "0.7rem",
-                  },
-                }}
-              >
-                Enviar Treino
-              </Typography>
-            </Button>
+              <CustomaizedButton
+                onClick={handleOpenCategoryModal}
+                color="#491290"
+                text="Criar categorias"
+              />
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <CustomaizedButton
+                onClick={handleOpenWorkoutModal}
+                color="#ff6f00"
+                text="Enviar Treino"
+              />
+            </Box>
           </Container>
-          <Box sx={{ pb: 10, width: "100%" }}>
+          <Box
+            sx={{
+              pb: 10,
+              py: 5,
+              width: "100%",
+              "@media (max-width:500px)": {
+                p: 3,
+              },
+            }}
+          >
             <MaterialReactTable table={table} />
           </Box>
         </TabPanel>

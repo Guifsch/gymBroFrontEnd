@@ -16,6 +16,7 @@ import {
   CardMedia,
   Paper,
 } from "@mui/material";
+import CustomaizedButton from "./Button";
 import CloseIcon from "@mui/icons-material/Close";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
 import ImageWithPlaceholder from "../utils/imagePlaceHolderUntilLoad";
@@ -35,19 +36,42 @@ const style = {
   left: "50%",
   padding: "20px",
   transform: "translate(-50%, -50%)",
-  borderRadius: "2%",
+  borderRadius: "5px",
+  overflow: "overlay",
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  minWidth: "800px",
+  maxHeight: "500px",
+  "@media (max-width:800px)": {
+    width: "100%",
+    minWidth: 0,
+  },
+  "@media (max-height:500px)": {
+    maxHeight: "400px",
+    pb: 3,
+  },
+};
+
+const style2 = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  padding: "20px",
+  transform: "translate(-50%, -50%)",
+  borderRadius: "5px",
   overflow: "overlay",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   minWidth: "500px",
-  maxWidth: "1000px",
+  maxWidth: "600px",
   maxHeight: "500px",
   "@media (max-width:600px)": {
     width: "100%",
     minWidth: 0,
   },
-  "@media (max-height:700px)": {
+  "@media (max-height:500px)": {
     maxHeight: "400px",
     pb: 3,
   },
@@ -85,10 +109,11 @@ const Calendar = ({ sets }) => {
     const newEvent = {
       id: uuidv4(),
       name: info.event.extendedProps.name,
+      textColor: info.event.extendedProps.textColor,
+      cardColor: info.event.extendedProps.cardColor,
       start,
       ...extendedProps,
     };
-
     setCalendarEvents((prevEvents) => [...prevEvents, newEvent]);
   };
 
@@ -101,6 +126,7 @@ const Calendar = ({ sets }) => {
   };
 
   const getCalendar = useCallback(async () => {
+    dispatch(loadingTrue());
     try {
       const response = await axiosInterceptor.get(`/api/calendar/calendar`, {
         withCredentials: true,
@@ -113,6 +139,8 @@ const Calendar = ({ sets }) => {
       setCalendarEvents(events);
     } catch (e) {
       dispatch(snackBarMessageError(e.response.data.error));
+    } finally {
+      dispatch(loadingFalse());
     }
   }, []);
 
@@ -233,6 +261,7 @@ const Calendar = ({ sets }) => {
     const newEvent = {
       id: uuidv4(),
       name: event.name,
+      textColor: event.textColor,
       start: selectedDate,
       ...event,
     };
@@ -303,8 +332,18 @@ const Calendar = ({ sets }) => {
               variant="contained"
               onClick={() => setOpenToolTip((prev) => !prev)}
               sx={{
+                transition: "0.2s",
+                "&:hover ": {
+                  filter: "brightness(0.8)",
+                  backgroundColor: "#2c3e50",
+                  boxShadow:
+                    "0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12)",
+                },
+                backgroundColor: "#2c3e50",
+                mr: 3,
                 "@media (max-width:1000px)": {
                   my: 3,
+                  mr: 0,
                 },
               }}
             >
@@ -422,30 +461,25 @@ const Calendar = ({ sets }) => {
               </Paper>
             )}
           </Box>
-          <Button
-            sx={{
-              ml: 3,
-              "@media (max-width:1000px)": {
-                ml: 0,
-                mb: 3,
-              },
-            }}
-            variant="contained"
+
+          <CustomaizedButton
             onClick={deleteCalendar}
-          >
-            Deletar todo calendário
-          </Button>
+            color="#bb0000"
+            text="Deletar todo calendário"
+          />
+
           <Typography
             sx={{
               boxShadow:
                 "0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12)",
               padding: "6px 16px",
               ml: 3,
-              borderRadius: "4px",
-              backgroundColor: "#1976d2",
+              borderRadius: "5px",
+              backgroundColor: "#491290",
               color: "white",
               "@media (max-width:1000px)": {
                 mb: 3,
+                mt: 3,
                 ml: 0,
               },
             }}
@@ -454,14 +488,11 @@ const Calendar = ({ sets }) => {
           </Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Button
-            sx={{ marginLeft: "20px", marginY: 0 }}
-            variant="contained"
-            color="primary"
+          <CustomaizedButton
             onClick={handleSaveCalendar}
-          >
-            Salvar
-          </Button>
+            color="#3a9906"
+            text="Salvar"
+          />
 
           <FormControl
             variant="outlined"
@@ -513,7 +544,7 @@ const Calendar = ({ sets }) => {
           id="external-events"
           sx={{
             p: 2,
-            bgcolor: "#f4f4f4",
+            background: " -webkit-linear-gradient(bottom, #495059, #232a33)",
             borderRadius: 2,
             "@media (max-width:1200px)": {
               display: "none",
@@ -521,7 +552,12 @@ const Calendar = ({ sets }) => {
           }}
         >
           <Typography
-            sx={{ display: "flex", justifyContent: "center" }}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              color: "white",
+              fontWeight: "bold",
+            }}
             variant="h6"
             gutterBottom
           >
@@ -533,11 +569,13 @@ const Calendar = ({ sets }) => {
                 handleDraggableShowContent(event);
               }}
               key={event._id}
-              className="fc-event"
+              className="fc-event fc-event-draggable-content"
               data-event-id={event._id}
               sx={{
+                transition: "0.2s",
+                backgroundColor: event.cardColor,
                 "&:hover": {
-                  background: "rgba(0, 0, 0, 0.1)",
+                  filter: "brightness(0.8)",
                 },
               }}
             >
@@ -547,11 +585,14 @@ const Calendar = ({ sets }) => {
                   display: "flex",
                   justifyContent: "center",
                   fontWeight: "bold",
+                  color: event.textColor,
                 }}
               >
                 {event.name}
               </Typography>
-              <Typography>{event.comment}</Typography>
+              <Typography sx={{ color: event.textColor }}>
+                {event.comment}
+              </Typography>
             </Box>
           ))}
         </Box>
@@ -579,27 +620,42 @@ const Calendar = ({ sets }) => {
             eventDrop={handleEventDrop}
             dateClick={handleDateClick}
             eventContent={(arg) => (
-              <Box>
+              <Box
+                sx={{
+                  width: "100%",
+                  marginX: "3px",
+                  backgroundColor:
+                    arg.event.extendedProps.cardColor || "#3788d8",
+                }}
+              >
                 <IconButton
                   size="small"
                   sx={{
                     position: "absolute",
-                    top: "5px",
+                    top: "9px",
                     width: "20px",
                     height: "20px",
-                    right: "5px",
+                    right: "8px",
                     zIndex: 99999,
-                    color: "red",
-                    background: "white",
                   }}
                   onClick={() => handleDeleteEvent(arg.event)}
                 >
-                  <CloseIcon fontSize="small" />
+                  <CloseIcon
+                    sx={{
+                      color: "white",
+                      backgroundColor: "black",
+                      borderRadius: "50px",
+                    }}
+                    fontSize="small"
+                  />
                 </IconButton>
                 <Typography
                   variant="body1"
                   className="fc-event-title"
-                  sx={{ maxWidth: "95px" }}
+                  sx={{
+                    maxWidth: "95px",
+                    color: arg.event.textColor || "white",
+                  }}
                 >
                   {arg.event.extendedProps.name}
                 </Typography>
@@ -641,9 +697,11 @@ const Calendar = ({ sets }) => {
                 alignItems: "center",
               }}
             >
-              {image && (
+              {/* {image && (
                 <>
-                  <Button onClick={handleGoBack}>Voltar</Button>
+
+                
+                  <Button onClick={handleGoBack}>VoltarRRRRR</Button>
                   <CardMedia
                     component="img"
                     sx={{
@@ -656,7 +714,7 @@ const Calendar = ({ sets }) => {
                     image={image}
                   />
                 </>
-              )}
+              )} */}
               {draggableShowContent && (
                 <>
                   <Typography
@@ -683,7 +741,7 @@ const Calendar = ({ sets }) => {
                       }}
                     />
                   ) : (
-                    <div>teste</div>
+                    false
                   )}
 
                   {/* Agrupe os itens por categoria */}
@@ -784,14 +842,14 @@ const Calendar = ({ sets }) => {
                             )}
 
                             {item.exercisePicture ? (
-                              <Button
-                                onClick={() => {
-                                  handleSetImage(item.exercisePicture);
-                                }}
-                                variant="contained"
-                              >
-                                <b>Imagem</b>
-                              </Button>
+                               <CustomaizedButton
+                               onClick={() => {
+                                 handleSetImage(item.exercisePicture);
+                               }}
+                               color="#491290"
+                               text="Imagem"
+                               margin="5px 0 0 0"
+                             />
                             ) : (
                               false
                             )}
@@ -814,7 +872,12 @@ const Calendar = ({ sets }) => {
             >
               {image && (
                 <>
-                  <Button onClick={handleGoBack}>Voltar</Button>
+                  <CustomaizedButton
+                    onClick={handleGoBack}
+                    color="#3a9906"
+                    text="Voltar"
+                    margin="20px"
+                  />
 
                   <ImageWithPlaceholder
                     src={image}
@@ -836,9 +899,18 @@ const Calendar = ({ sets }) => {
                   </Typography>
                   <Button
                     variant="contained"
-                    color="secondary"
                     onClick={() => handleDeleteEvent(selectedEvent)}
-                    sx={{ marginBottom: "20px" }}
+                    sx={{
+                      marginBottom: "20px",
+                      backgroundColor: "#bb0000 ",
+                      transition: "0.2s",
+                      "&:hover ": {
+                        filter: "brightness(0.8)",
+                        boxShadow:
+                          "0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12)",
+                        backgroundColor: "#bb0000",
+                      },
+                    }}
                   >
                     Excluir Set
                   </Button>
@@ -962,14 +1034,14 @@ const Calendar = ({ sets }) => {
                             )}
 
                             {item.exercisePicture ? (
-                              <Button
+                              <CustomaizedButton
                                 onClick={() => {
                                   handleSetImage(item.exercisePicture);
                                 }}
-                                variant="contained"
-                              >
-                                <b>Imagem</b>
-                              </Button>
+                                color="#491290"
+                                text="Imagem"
+                                margin="5px 0 0 0"
+                              />
                             ) : (
                               false
                             )}
@@ -985,8 +1057,22 @@ const Calendar = ({ sets }) => {
         </Box>
       </Modal>
       <Modal open={openEventModal} onClose={() => setOpenEventModal(false)}>
-        <Box sx={style}>
-          <Typography variant="h6" gutterBottom>
+        <Box sx={style2}>
+          <IconButton
+            onClick={() => setOpenEventModal(false)}
+            size="large"
+            sx={{
+              position: "absolute",
+              top: "5px",
+              right: "10px",
+              zIndex: "999",
+            }}
+            aria-label="back"
+            color="primary"
+          >
+            <CloseIcon fontSize="inherit" />
+          </IconButton>
+          <Typography variant="h6" gutterBottom align="center">
             Selecione um Set
           </Typography>
           {externalEvents.map((event) => (
@@ -995,21 +1081,29 @@ const Calendar = ({ sets }) => {
               onClick={() => handleAddEvent(event)}
               sx={{
                 cursor: "pointer",
+                borderRadius: "5px",
                 padding: "10px",
                 borderBottom: "1px solid #ddd",
                 background: "#3788d8",
                 color: "white",
                 marginBottom: "20px",
                 wordBreak: "break-all",
+                backgroundColor: event.cardColor,
               }}
             >
               <Typography
-                sx={{ display: "flex", justifyContent: "center" }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  color: event.textColor,
+                }}
                 variant="h4"
               >
                 {event.name}
               </Typography>
-              <Typography variant="body1">{event.comment}</Typography>
+              <Typography sx={{ color: event.textColor }} variant="body1">
+                {event.comment}
+              </Typography>
             </Box>
           ))}
         </Box>

@@ -3,6 +3,15 @@ import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://guifsch.github.io',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
   base: "/gymBroFrontEnd/",
   plugins: [react()],
 });

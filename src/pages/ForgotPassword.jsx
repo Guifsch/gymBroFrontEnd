@@ -1,19 +1,17 @@
 import {
   TextField,
-  Button,
   Box,
-  Container,
   IconButton,
   CardMedia,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import backgroundImage from "../assets/login_background_images/gym_background.jpg";
+import backgroundImage from "../assets/login_background_images/background-circle.png";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import axiosConfig from "../utils/axios";
 import { useNavigate } from "react-router-dom";
-
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import CustomaizedButton from "../components/Button";
+import EmailIcon from "@mui/icons-material/Email";
 import Loading from "../components/Loading";
 import { useDispatch } from "react-redux";
 import { loadingTrue, loadingFalse } from "../redux/loading/loadingSlice";
@@ -49,7 +47,10 @@ function ForgotPassword() {
   };
 
   return (
-    <Box className="flex justify-center items-center h-screen bg-slate-200">
+    <Box
+      className="flex justify-center items-center h-screen bg-slate-200"
+      sx={{ background: "-webkit-linear-gradient(bottom, #007726, #000000)" }}
+    >
       <CardMedia
         sx={{
           width: "100%",
@@ -75,7 +76,7 @@ function ForgotPassword() {
           margin: "25px",
           position: "relative",
           boxShadow: "5px 5px 15px 1px",
-          borderRadius: "5%",
+          borderRadius: "5px",
           width: "450px",
           overflow: "overlay",
           height: "600px",
@@ -83,12 +84,12 @@ function ForgotPassword() {
             width: "100%",
             height: "550px",
           },
-          "@media (max-height:700px)": {
-            maxHeight: '400px',
+          "@media (max-height:600px)": {
+            maxHeight: "400px",
           },
         }}
       >
-        <Loading top="0"/>
+        <Loading top="0" />
         <IconButton
           onClick={() => history(-1)}
           size="large"
@@ -102,57 +103,56 @@ function ForgotPassword() {
         >
           <KeyboardBackspaceIcon fontSize="inherit" />
         </IconButton>
-        <Typography variant="h4" textAlign="center">
+        <Typography variant="h4" textAlign="center" sx={{ fontWeight: "bold" }}>
           Esqueceu a senha?
         </Typography>
         <Typography variant="h8" textAlign="center" sx={{ mx: 5, mt: 3 }}>
-        Digite seu endereço de e-mail para receber um link de redefinição de senha!
+          Digite seu endereço de e-mail para receber um link de redefinição de
+          senha!
         </Typography>
-        <Container
+        <Box
           sx={{
             display: "flex",
-            alignItems: "flex-end",
+            alignItems: "center",
             justifyContent: "center",
             mt: 3,
+            width: "80%",
           }}
         >
-          <Box
+          <EmailIcon
             sx={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "center",
+              color: "action.active",
+              mr: 1,
+              my: 0.5,
+              width: "1.3em",
+              height: "1.3em",
             }}
-          >
-            <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              onChange={handleChange}
-              type="email"
-              required
-              id="email"
-              label="Email"
-              variant="standard"
-              autoComplete="on"
-            />
-          </Box>
-        </Container>
-        <Container
-          sx={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "center",
-            mt: 3,
-          }}
-        ></Container>
-
-        <Button
-          sx={{
-            my: 3,
-          }}
-          variant="contained"
+          />
+          <TextField
+            onChange={handleChange}
+            type="email"
+            id="email"
+            label="Email"
+            variant="filled"
+            autoComplete="on"
+            required
+            sx={{
+              width: "100%",
+              "& .MuiFormLabel-asterisk": {
+                display: "none",
+              },
+            }}
+          />
+        </Box>
+        <CustomaizedButton
+          color="#491290"
+          text="Enviar"
+          width="80%"
+          height="50px"
+          margin="30px 0 0 0"
           type="submit"
-        >
-          Enviar
-        </Button>
+        />
+        +
       </Box>
     </Box>
   );

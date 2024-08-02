@@ -15,6 +15,7 @@ import {
   snackBarMessageError,
 } from "../redux/snackbar/snackBarSlice";
 import { useDispatch } from "react-redux";
+import CustomaizedButton from "../components/Button";
 import React, { useCallback, useState, useEffect } from "react";
 import axiosConfig from "../utils/axios";
 
@@ -24,8 +25,9 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 600,
-  height: 700,
-  borderRadius: "2%",
+  height: "auto",
+  maxHeight: 700,
+  borderRadius: "5px",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -35,7 +37,7 @@ const style = {
     maxHeight: "520px",
   },
   "@media (max-height:700px)": {
-    maxHeight: '400px',
+    maxHeight: "400px",
   },
 };
 
@@ -165,7 +167,10 @@ export default function ModalWorkoutCategory({
       aria-labelledby="transition-modal-title"
       aria-describedby="transition-modal-description"
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        setFields([]);
+      }}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
       slotProps={{
@@ -177,7 +182,10 @@ export default function ModalWorkoutCategory({
     >
       <Box sx={style}>
         <IconButton
-          onClick={handleClose}
+          onClick={() => {
+            handleClose();
+            setFields([]);
+          }}
           size="large"
           sx={{
             position: "absolute",
@@ -211,27 +219,34 @@ export default function ModalWorkoutCategory({
               opacity: 1,
             },
             display: "flex",
+            height: "100%",
             flexDirection: "column",
+            justifyContent: "space-between",
             alignItems: "center",
+            padding: "40px 40px 0 40px",
           }}
         >
-          <Container
+          <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              paddingTop: "50px",
+              width: "100%",
             }}
           >
-            <Container
+            <Box
               sx={{
                 display: "flex",
                 justifyContent: "center",
               }}
             >
-              <Button onClick={categoryAdd}>Adicionar categoria</Button>
-            </Container>
+              <CustomaizedButton
+                onClick={categoryAdd}
+                color="#491290"
+                text="Adicionar categoria"
+              />
+            </Box>
 
-            <Container
+            <Box
               sx={{
                 display: "flex",
                 flexWrap: "wrap",
@@ -248,9 +263,10 @@ export default function ModalWorkoutCategory({
                 sx={{
                   display: "flex",
                   width: "50%",
+                  padding: "15px",
                   flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: "initial",
+                  justifyContent: "flex-start",
                   borderTop: "1px solid #00000061",
                   borderLeft: "1px solid #00000061",
                   borderBottom: "1px solid #00000061",
@@ -274,15 +290,19 @@ export default function ModalWorkoutCategory({
                     required
                     id={`field-${index}`}
                     label="Nome"
-                    variant="standard"
+                    variant="filled"
                     autoComplete="on"
                     sx={{
-                      width: "50%",
-                      marginRight: "5%",
-                      marginTop: "10px",
+                      width: "80%",
+                      my: "10px",
+                      "& input": {
+                        padding: "24px 10px 3px 13px",
+                      },
+                      "& .MuiInputLabel-shrink": { top: "-3px" },
                       "@media (max-width:600px)": {
                         marginRight: "0",
                         marginLeft: "16px",
+                        width: "75%",
                       },
                     }}
                     value={inputValues[index] || ""}
@@ -293,11 +313,17 @@ export default function ModalWorkoutCategory({
                   <Button
                     sx={{
                       position: "relative",
-                      bottom: "30px",
-                      left: "90px",
+                      bottom: "50px",
+                      minWidth: "auto",
+                      backgroundColor: "#bb0000",
+                      color: "white",
+                      borderRadius: "50%",
+                      left: "200px",
+                      width: "25px",
+                      height: "25px",
+                      "&:hover": { backgroundColor: "rgb(4 4 4 / 96%)" },
                       "@media (max-width:600px)": {
-                        left: "130px",
-                        width: "20px",
+                        left: "140px",
                       },
                     }}
                     onClick={categoryRemove}
@@ -312,9 +338,10 @@ export default function ModalWorkoutCategory({
                 sx={{
                   display: "flex",
                   width: "50%",
+                  padding: "15px",
                   flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: "normal",
+                  justifyContent: "flex-start",
                   borderTop: "1px solid #00000061",
                   borderRight: "1px solid #00000061 ",
                   borderBottom: "1px solid #00000061",
@@ -330,11 +357,16 @@ export default function ModalWorkoutCategory({
                 }}
               >
                 {workoutsCategorysArray.map((item, index) => (
-                  <Container
+                  <Box
                     key={index}
                     sx={{
                       display: "flex",
-                      alignItems: "baseline",
+                      p: "10px 15px 10px 15px",
+                      my: "10px",
+                      borderRadius: "3px",
+                      border: "solid 2px",
+                      height: "50px",
+                      alignItems: "center",
                       justifyContent: "space-between",
                     }}
                   >
@@ -345,43 +377,39 @@ export default function ModalWorkoutCategory({
                       autoComplete="on"
                       sx={{
                         width: "26%",
-                        marginRight: "5%",
-                        marginTop: "10px",
                       }}
                     >
                       {item.name}
                     </Typography>
-                    <Button onClick={() => deleteCategory(item._id)}>
-                      Deletar
-                    </Button>
-                  </Container>
+
+                    <CustomaizedButton
+                      onClick={() => deleteCategory(item._id)}
+                      color="#bb0000"
+                      text="Deletar"
+                      fontSize=" 0.7rem"
+                    />
+                  </Box>
                 ))}
               </Box>
-            </Container>
-          </Container>
+            </Box>
+          </Box>
 
           {workoutsCategorysArray.length > 0 ? (
-            <Button
-              sx={{
-                my: 5,
-              }}
-              variant="contained"
-              type="submit"
+            <CustomaizedButton
               onClick={udpateCategory}
-            >
-              Salvar
-            </Button>
+              color="#3a9906"
+              text="Salvar"
+              width="150px"
+              margin="30px 0 30px 0"
+            />
           ) : (
-            <Button
-              sx={{
-                mt: 5,
-              }}
-              variant="contained"
-              type="submit"
+            <CustomaizedButton
               onClick={submitCategory}
-            >
-              Salvar
-            </Button>
+              color="#3a9906"
+              text="Salvar"
+              width="150px"
+              margin="30px 0 30px 0"
+            />
           )}
         </Box>
       </Box>

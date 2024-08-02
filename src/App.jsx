@@ -25,7 +25,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
          <CssBaseline />
-    <BrowserRouter basename={"/gymBroFrontEnd/"}>
+    <BrowserRouter>
       <SnackBar />
       {currentUser ? <Menu /> : false}
       <Routes>
