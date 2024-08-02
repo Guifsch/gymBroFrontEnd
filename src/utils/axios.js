@@ -9,23 +9,36 @@ const axiosConfig = () => {
   const dispatch = useDispatch();
 
   const axiosClient = axios.create({
-    baseURL:
-      import.meta.env.MODE === "production"
-        ? import.meta.env.VITE_BASE_URL_PROD
-        : import.meta.env.VITE_BASE_URL_DEV,
-    timeout: 10000,
+    baseURL: "https://gymbrobackend.onrender.com",
     headers: {
       "Content-Type": "application/json",
     },
   });
 
-  axiosClient.interceptors.request.use(
+  // const axiosClient = axios.create({
+  //   baseURL: import.meta.env.MODE === 'production'
+  //     ? import.meta.env.VITE_BASE_URL_PROD
+  //     : import.meta.env.VITE_BASE_URL_DEV,
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  // });
+
+  // const axiosClient = axios.create({
+  //   baseURL: "http://localhost:3000",
+  //   timeout: 5000,
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  // });
+
+ axiosClient.interceptors.request.use(
     (config) => {
       console.log(config, "interceptor response Response");
       return config;
     },
     (error) => {
-      console.log(error);
+      console.log(error)
       Promise.reject(error);
     }
   );
@@ -35,23 +48,20 @@ const axiosConfig = () => {
       return response;
     },
     (error) => {
+    
       if (!error.response) {
-        dispatch(
-          snackBarMessageError("Ops, ocorreu um erro, verifique sua conexão!")
-        );
-        dispatch(signOut());
-      } else if (
-        error.response.statusText === "Unauthorized" ||
-        error.response.statusText === "Not Found" ||
-        error.response.data.error === "Você não está autentificado!"
-      ) {
-        dispatch(snackBarMessageError(error.response.data.error));
-        console.log(error, "interceptor response Error");
-        history("/");
-
+        dispatch(snackBarMessageError("Ops, ocorreu um erro, verifique sua conexão!"));
         dispatch(signOut());
       }
-      console.log(error, "interceptor request Error");
+      else if (error.response.statusText === "Unauthorized" || error.response.statusText === "Not Found" || error.response.data.error === "Você não está autentificado!") {
+        dispatch(snackBarMessageError(error.response.data.error))
+        console.log(error, "interceptor response Error");
+        history("/");
+      
+        dispatch(signOut());
+       
+      }
+      console.log(error, "interceptor request Error")
       return Promise.reject(error);
     }
   );
