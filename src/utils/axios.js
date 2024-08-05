@@ -9,59 +9,45 @@ const axiosConfig = () => {
   const dispatch = useDispatch();
 
   const axiosClient = axios.create({
-    baseURL: "https://gymbrobackend.onrender.com",
+    baseURL:
+      import.meta.env.MODE === "production"
+        ? import.meta.env.VITE_BASE_URL_PROD
+        : import.meta.env.VITE_BASE_URL_DEV,
+    timeout: 10000,
     headers: {
       "Content-Type": "application/json",
     },
   });
 
-  // const axiosClient = axios.create({
-  //   baseURL: import.meta.env.MODE === 'production'
-  //     ? import.meta.env.VITE_BASE_URL_PROD
-  //     : import.meta.env.VITE_BASE_URL_DEV,
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  // });
-
-  // const axiosClient = axios.create({
-  //   baseURL: "http://localhost:3000",
-  //   timeout: 5000,
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  // });
-
- axiosClient.interceptors.request.use(
+  axiosClient.interceptors.request.use(
     (config) => {
-      console.log(config, "interceptor response Response");
       return config;
     },
     (error) => {
-      console.log(error)
       Promise.reject(error);
     }
   );
   axiosClient.interceptors.response.use(
     (response) => {
-      console.log(response, "interceptor request Config");
       return response;
     },
     (error) => {
-    
       if (!error.response) {
-        dispatch(snackBarMessageError("Ops, ocorreu um erro, verifique sua conexão!"));
+        dispatch(
+          snackBarMessageError("Ops, ocorreu um erro, verifique sua conexão!")
+        );
         dispatch(signOut());
-      }
-      else if (error.response.statusText === "Unauthorized" || error.response.statusText === "Not Found" || error.response.data.error === "Você não está autentificado!") {
-        dispatch(snackBarMessageError(error.response.data.error))
-        console.log(error, "interceptor response Error");
+      } else if (
+        error.response.statusText === "Unauthorized" ||
+        error.response.statusText === "Not Found" ||
+        error.response.data.error === "Você não está autentificado!"
+      ) {
+        dispatch(snackBarMessageError(error.response.data.error));
+
         history("/");
-      
+
         dispatch(signOut());
-       
       }
-      console.log(error, "interceptor request Error")
       return Promise.reject(error);
     }
   );
