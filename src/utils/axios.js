@@ -9,11 +9,7 @@ const axiosConfig = () => {
   const dispatch = useDispatch();
 
   const axiosClient = axios.create({
-    baseURL:
-      import.meta.env.MODE === "production"
-        ? import.meta.env.VITE_BASE_URL_PROD
-        : import.meta.env.VITE_BASE_URL_DEV,
-    timeout: 10000,
+    baseURL: "https://gymbrobackend.onrender.com",
     headers: {
       "Content-Type": "application/json",
     },
