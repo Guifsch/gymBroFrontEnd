@@ -10,6 +10,7 @@ const axiosConfig = () => {
 
   const axiosClient = axios.create({
     baseURL: "https://gymbrobackend.onrender.com",
+    timeout: 10000,
     headers: {
       "Content-Type": "application/json",
     },
